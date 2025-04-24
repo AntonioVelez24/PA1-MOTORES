@@ -26,13 +26,17 @@ public class PlayerControl : MonoBehaviour
     {
         
     }
+    private void FixedUpdate()
+    {
+        myRigidbody.velocity = new Vector3(speed * directionX, myRigidbody.velocity.y, speed * directionZ);
+    }
     public void OnMovementX (InputAction.CallbackContext context)
     {
         directionX = context.ReadValue<float>();
     }
     public void OnMovementZ(InputAction.CallbackContext context)
     {
-        directionX = context.ReadValue<float>();
+        directionZ = context.ReadValue<float>();
     }
     public void OnJumpInput(InputAction.CallbackContext context)
     {
