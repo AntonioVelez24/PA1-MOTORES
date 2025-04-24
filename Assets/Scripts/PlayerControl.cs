@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,18 @@ public class PlayerControl : MonoBehaviour
     private float directionX;
     private float directionZ;
 
+    public event Action OnPlayerDamaged;
+    public event Action OnPlayerDead;
+    /*
+    private void OnEnable()
+    {
+        OnPlayerDamaged +=
+    }
+    private void OnDisable()
+    {
+        OnPlayerDamaged -= 
+    }
+    */
     private void Awake()
     {
         myRigidbody = GetComponent<Rigidbody>();
@@ -26,10 +39,31 @@ public class PlayerControl : MonoBehaviour
     {
         
     }
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
+    public void SetJumpForce(float newJumpForce)
+    {
+        jumpForce = newJumpForce;
+    }
     private void FixedUpdate()
     {
         myRigidbody.velocity = new Vector3(speed * directionX, myRigidbody.velocity.y, speed * directionZ);
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            playerHealth -= 1;
+            OnPlayerDamaged?.Invoke();
+            if (playerHealth <= 0)
+            {
+                OnPlayerDead?.Invoke();
+            }
+        }
+    }
+    #region InputActions
     public void OnMovementX (InputAction.CallbackContext context)
     {
         directionX = context.ReadValue<float>();
@@ -45,4 +79,5 @@ public class PlayerControl : MonoBehaviour
             myRigidbody.AddForce(myRigidbody.transform.up * jumpForce, ForceMode.Impulse);
         }
     }
+    #endregion
 }
